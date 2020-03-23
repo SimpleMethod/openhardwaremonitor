@@ -5,20 +5,22 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
   Copyright (C) 2011-2012 Michael Möller <mmoeller@openhardwaremonitor.org>
-	
+  Modified by Michał Młodawski Simplemethod.io https://github.com/SimpleMethod 2020
 */
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-namespace OpenHardwareMonitor.Hardware.HDD {
+namespace OpenHardwareMonitor.Hardware.HDD
+{
 
-  [StructLayout(LayoutKind.Sequential, Pack = 1)]
-  internal struct DriveThresholdValue {
-    public byte Identifier;
-    public byte Threshold;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public byte[] Unknown;
-  }
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    internal struct DriveThresholdValue
+    {
+        public byte Identifier;
+        public byte Threshold;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public byte[] Unknown;
+    }
 
 }

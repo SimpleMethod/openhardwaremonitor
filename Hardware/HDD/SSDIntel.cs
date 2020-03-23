@@ -4,23 +4,25 @@
   License, v. 2.0. If a copy of the MPL was not distributed with this
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
-  Copyright (C) 2009-2020 Michael Möller <mmoeller@openhardwaremonitor.org>
+  Copyright (C) 2009-2020 Michael Möller <mmoeller@openhardwaremonitor.org> Modified by Michał Młodawski Simplemethod.io https://github.com/SimpleMethod 2020
 	Copyright (C) 2010 Paul Werelds
   Copyright (C) 2011 Roland Reinl <roland-reinl@gmx.de>
-	
+	Modified by Michał Młodawski Simplemethod.io https://github.com/SimpleMethod 2020
 */
 
 using System.Collections.Generic;
 using OpenHardwareMonitor.Collections;
 
-namespace OpenHardwareMonitor.Hardware.HDD {
-   
-  [NamePrefix("INTEL SSD"), 
-   RequireSmart(0xE1), RequireSmart(0xE8), RequireSmart(0xE9)]
-  internal class SSDIntel : AbstractHarddrive {
+namespace OpenHardwareMonitor.Hardware.HDD
+{
 
-    private static readonly IEnumerable<SmartAttribute> smartAttributes =
-      new List<SmartAttribute> {
+    [NamePrefix("INTEL SSD"),
+     RequireSmart(0xE1), RequireSmart(0xE8), RequireSmart(0xE9)]
+    internal class SSDIntel : AbstractHarddrive
+    {
+
+        private static readonly IEnumerable<SmartAttribute> smartAttributes =
+          new List<SmartAttribute> {
 
       new SmartAttribute(0x01, SmartNames.ReadErrorRate),
       new SmartAttribute(0x03, SmartNames.SpinUpTime),
@@ -42,27 +44,27 @@ namespace OpenHardwareMonitor.Hardware.HDD {
         new[] { new ParameterDescription("Offset [°C]",
                   "Temperature offset of the thermal sensor.\n" +
                   "Temperature = Value + Offset.", 0) }),
-      new SmartAttribute(0xC0, SmartNames.UnsafeShutdownCount), 
+      new SmartAttribute(0xC0, SmartNames.UnsafeShutdownCount),
       new SmartAttribute(0xC7, SmartNames.CRCErrorCount, RawToInt),
-      new SmartAttribute(0xE1, SmartNames.HostWrites, 
-        (byte[] r, byte v, IReadOnlyArray<IParameter> p) 
-          => { return RawToInt(r, v, p) / 0x20; }, 
+      new SmartAttribute(0xE1, SmartNames.HostWrites,
+        (byte[] r, byte v, IReadOnlyArray<IParameter> p)
+          => { return RawToInt(r, v, p) / 0x20; },
         SensorType.Data, 0, SmartNames.HostWrites),
-      new SmartAttribute(0xE8, SmartNames.RemainingLife, 
+      new SmartAttribute(0xE8, SmartNames.RemainingLife,
         null, SensorType.Level, 0, SmartNames.RemainingLife),
       new SmartAttribute(0xE9, SmartNames.MediaWearOutIndicator),
       new SmartAttribute(0xF1, SmartNames.HostWrites,
-        (byte[] r, byte v, IReadOnlyArray<IParameter> p) 
-          => { return RawToInt(r, v, p) / 0x20; }, 
+        (byte[] r, byte v, IReadOnlyArray<IParameter> p)
+          => { return RawToInt(r, v, p) / 0x20; },
         SensorType.Data, 0, SmartNames.HostWrites),
-      new SmartAttribute(0xF2, SmartNames.HostReads, 
-        (byte[] r, byte v, IReadOnlyArray<IParameter> p) 
-          => { return RawToInt(r, v, p) / 0x20; }, 
-        SensorType.Data, 1, SmartNames.HostReads),      
-    };
+      new SmartAttribute(0xF2, SmartNames.HostReads,
+        (byte[] r, byte v, IReadOnlyArray<IParameter> p)
+          => { return RawToInt(r, v, p) / 0x20; },
+        SensorType.Data, 1, SmartNames.HostReads),
+        };
 
-    public SSDIntel(ISmart smart, string name, string firmwareRevision, 
-      int index, ISettings settings)
-      : base(smart, name, firmwareRevision, index, smartAttributes, settings) {}
-  }
+        public SSDIntel(ISmart smart, string name, string firmwareRevision,
+          int index, ISettings settings)
+          : base(smart, name, firmwareRevision, index, smartAttributes, settings) { }
+    }
 }

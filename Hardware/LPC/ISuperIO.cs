@@ -5,29 +5,31 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
   Copyright (C) 2009-2011 Michael Möller <mmoeller@openhardwaremonitor.org>
-	
+	Modified by Michał Młodawski Simplemethod.io https://github.com/SimpleMethod 2020
 */
 
-namespace OpenHardwareMonitor.Hardware.LPC {
-  internal interface ISuperIO {
+namespace OpenHardwareMonitor.Hardware.LPC
+{
+    internal interface ISuperIO
+    {
 
-    Chip Chip { get; }
+        Chip Chip { get; }
 
-    // get voltage, temperature, fan and control channel values
-    float?[] Voltages { get; }
-    float?[] Temperatures { get; }
-    float?[] Fans { get; }
-    float?[] Controls { get; }
+        // get voltage, temperature, fan and control channel values
+        float?[] Voltages { get; }
+        float?[] Temperatures { get; }
+        float?[] Fans { get; }
+        float?[] Controls { get; }
 
-    // set control value, null = auto    
-    void SetControl(int index, byte? value);         
+        // set control value, null = auto    
+        void SetControl(int index, byte? value);
 
-    // read and write GPIO
-    byte? ReadGPIO(int index);
-    void WriteGPIO(int index, byte value);
+        // read and write GPIO
+        byte? ReadGPIO(int index);
+        void WriteGPIO(int index, byte value);
 
-    string GetReport();
+        string GetReport();
 
-    void Update();
-  }
+        void Update();
+    }
 }

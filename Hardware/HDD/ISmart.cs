@@ -5,32 +5,34 @@
   file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
   Copyright (C) 2011-2012 Michael Möller <mmoeller@openhardwaremonitor.org>
-	
+	Modified by Michał Młodawski Simplemethod.io https://github.com/SimpleMethod 2020
 */
 
 using System;
 using System.Collections.Generic;
 
 
-namespace OpenHardwareMonitor.Hardware.HDD {
+namespace OpenHardwareMonitor.Hardware.HDD
+{
 
-  internal interface ISmart {
+    internal interface ISmart
+    {
 
-    IntPtr OpenDrive(int driveNumber);
+        IntPtr OpenDrive(int driveNumber);
 
-    bool EnableSmart(IntPtr handle, int driveNumber);
+        bool EnableSmart(IntPtr handle, int driveNumber);
 
-    DriveAttributeValue[] ReadSmartData(IntPtr handle, int driveNumber);
+        DriveAttributeValue[] ReadSmartData(IntPtr handle, int driveNumber);
 
-    DriveThresholdValue[] ReadSmartThresholds(IntPtr handle, int driveNumber);
+        DriveThresholdValue[] ReadSmartThresholds(IntPtr handle, int driveNumber);
 
-    bool ReadNameAndFirmwareRevision(IntPtr handle, int driveNumber,
-      out string name, out string firmwareRevision); 
+        bool ReadNameAndFirmwareRevision(IntPtr handle, int driveNumber,
+          out string name, out string firmwareRevision);
 
-    void CloseHandle(IntPtr handle);
+        void CloseHandle(IntPtr handle);
 
-    IntPtr InvalidHandle { get; }
+        IntPtr InvalidHandle { get; }
 
-    string[] GetLogicalDrives(int driveIndex);
-  }
+        string[] GetLogicalDrives(int driveIndex);
+    }
 }

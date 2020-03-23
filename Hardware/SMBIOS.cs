@@ -10,9 +10,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Management;
 using System.Text;
+using System.Text.Json;
+using OpenHardwareMonitor.Collections;
 
 namespace OpenHardwareMonitor.Hardware {
 
@@ -149,93 +152,129 @@ namespace OpenHardwareMonitor.Hardware {
     }
 
     public string GetReport() {
-      StringBuilder r = new StringBuilder();
+        Queue<RamMemory> ramMemories= new Queue<RamMemory>();
+        SMBIOS_Model smbiosModel = new SMBIOS_Model();
 
-      if (version != null) {
-        r.Append("SMBIOS Version: "); r.AppendLine(version.ToString(2));
-        r.AppendLine();
-      }
-
-      if (BIOS != null) {
-        r.Append("BIOS Vendor: "); r.AppendLine(BIOS.Vendor);
-        r.Append("BIOS Version: "); r.AppendLine(BIOS.Version);
-        r.AppendLine();
-      }
-
-      if (System != null) {
-        r.Append("System Manufacturer: ");
-        r.AppendLine(System.ManufacturerName);
-        r.Append("System Name: ");
-        r.AppendLine(System.ProductName);
-        r.Append("System Version: ");
-        r.AppendLine(System.Version);
-        r.AppendLine();
-      }
-
-      if (Board != null) {
-        r.Append("Mainboard Manufacturer: ");
-        r.AppendLine(Board.ManufacturerName);
-        r.Append("Mainboard Name: ");
-        r.AppendLine(Board.ProductName);
-        r.Append("Mainboard Version: ");
-        r.AppendLine(Board.Version);
-        r.AppendLine();
-      }
-
-      if (Processor != null) {
-        r.Append("Processor Manufacturer: ");
-        r.AppendLine(Processor.ManufacturerName);
-        r.Append("Processor Version: ");
-        r.AppendLine(Processor.Version);
-        r.Append("Processor Core Count: ");
-        r.AppendLine(Processor.CoreCount.ToString());
-        r.Append("Processor Core Enabled: ");
-        r.AppendLine(Processor.CoreEnabled.ToString());
-        r.Append("Processor Thread Count: ");
-        r.AppendLine(Processor.ThreadCount.ToString());
-        r.Append("Processor External Clock: ");
-        r.Append(Processor.ExternalClock);
-        r.AppendLine(" Mhz");
-        r.AppendLine();
-      }
-
-      for (int i = 0; i < MemoryDevices.Length; i++) {        
-        r.Append("Memory Device [" + i + "] Manufacturer: ");
-        r.AppendLine(MemoryDevices[i].ManufacturerName);
-        r.Append("Memory Device [" + i + "] Part Number: ");
-        r.AppendLine(MemoryDevices[i].PartNumber);
-        r.Append("Memory Device [" + i + "] Device Locator: ");
-        r.AppendLine(MemoryDevices[i].DeviceLocator);
-        r.Append("Memory Device [" + i + "] Bank Locator: ");
-        r.AppendLine(MemoryDevices[i].BankLocator);
-        r.Append("Memory Device [" + i + "] Speed: ");
-        r.Append(MemoryDevices[i].Speed);
-        r.AppendLine(" MHz");
-        r.AppendLine();
-      }
-
-      if (raw != null) {
-        string base64 = Convert.ToBase64String(raw);
-        r.AppendLine("SMBIOS Table");
-        r.AppendLine();
-
-        for (int i = 0; i < Math.Ceiling(base64.Length / 64.0); i++) {
-          r.Append(" ");
-          for (int j = 0; j < 0x40; j++) {
-            int index = (i << 6) | j;
-            if (index < base64.Length) {              
-              r.Append(base64[index]);
+            if (BIOS != null)
+            {
+                smbiosModel.BiosVendor = BIOS.Vendor;
+                smbiosModel.BiosVersion = BIOS.Version;
             }
-          }
-          r.AppendLine();
-        }
-        r.AppendLine();
-      }
+            if (Board != null)
+            {
+                smbiosModel.MainboardManufacturer = Board.ManufacturerName;
+                smbiosModel.MainboardName = Board.ProductName;
+            }
 
-      return r.ToString();
+            if (Processor != null)
+            {
+                smbiosModel.ProcessorManufacturer = Processor.ManufacturerName;
+                smbiosModel.ProcessorVersion = Processor.Version;
+                smbiosModel.ProcessorCoreCount = Processor.CoreCount.ToString();
+                smbiosModel.ProcessorThreadCount = Processor.ThreadCount.ToString();
+            }
+
+            for (int i = 0; i < MemoryDevices.Length; i++)
+            {
+                ramMemories.Enqueue( new RamMemory(MemoryDevices[i].ManufacturerName, MemoryDevices[i].PartNumber, MemoryDevices[i].DeviceLocator, MemoryDevices[i].BankLocator, MemoryDevices[i].Speed.ToString()));
+            }
+            smbiosModel.RamMemory = ramMemories;
+
+            return JsonSerializer.Serialize(smbiosModel);
+
+            /*
+          StringBuilder r = new StringBuilder();
+
+    if (version != null) {
+      r.Append("SMBIOS Version: "); r.AppendLine(version.ToString(2));
+      r.AppendLine();
     }
 
-    public BIOSInformation BIOS {
+    if (BIOS != null) {
+      r.Append("BIOS Vendor: "); r.AppendLine(BIOS.Vendor);
+      r.Append("BIOS Version: "); r.AppendLine(BIOS.Version);
+      r.AppendLine();
+    }
+
+    if (System != null) {
+      r.Append("System Manufacturer: ");
+      r.AppendLine(System.ManufacturerName);
+      r.Append("System Name: ");
+      r.AppendLine(System.ProductName);
+      r.Append("System Version: ");
+      r.AppendLine(System.Version);
+      r.AppendLine();
+    }
+
+    if (Board != null) {
+      r.Append("Mainboard Manufacturer: ");
+      r.AppendLine(Board.ManufacturerName);
+      r.Append("Mainboard Name: ");
+      r.AppendLine(Board.ProductName);
+      r.Append("Mainboard Version: ");
+      r.AppendLine(Board.Version);
+      r.AppendLine();
+    }
+
+    if (Processor != null) {
+      r.Append("Processor Manufacturer: ");
+      r.AppendLine(Processor.ManufacturerName);
+      r.Append("Processor Version: ");
+      r.AppendLine(Processor.Version);
+      r.Append("Processor Core Count: ");
+      r.AppendLine(Processor.CoreCount.ToString());
+      r.Append("Processor Core Enabled: ");
+      r.AppendLine(Processor.CoreEnabled.ToString());
+      r.Append("Processor Thread Count: ");
+      r.AppendLine(Processor.ThreadCount.ToString());
+      r.Append("Processor External Clock: ");
+      r.Append(Processor.ExternalClock);
+      r.AppendLine(" Mhz");
+      r.AppendLine();
+    }
+
+    for (int i = 0; i < MemoryDevices.Length; i++) {        
+      r.Append("Memory Device [" + i + "] Manufacturer: ");
+      r.AppendLine(MemoryDevices[i].ManufacturerName);
+      r.Append("Memory Device [" + i + "] Part Number: ");
+      r.AppendLine(MemoryDevices[i].PartNumber);
+      r.Append("Memory Device [" + i + "] Device Locator: ");
+      r.AppendLine(MemoryDevices[i].DeviceLocator);
+      r.Append("Memory Device [" + i + "] Bank Locator: ");
+      r.AppendLine(MemoryDevices[i].BankLocator);
+      r.Append("Memory Device [" + i + "] Speed: ");
+      r.Append(MemoryDevices[i].Speed);
+      r.AppendLine(" MHz");
+      r.AppendLine();
+    }
+
+            if (raw != null) {
+              string base64 = Convert.ToBase64String(raw);
+
+              r.AppendLine("SMBIOS Table");
+              r.AppendLine();
+
+              for (int i = 0; i < Math.Ceiling(base64.Length / 64.0); i++) {
+                r.Append(" ");
+                for (int j = 0; j < 0x40; j++) {
+                  int index = (i << 6) | j;
+                  if (index < base64.Length) {              
+                    r.Append(base64[index]);
+                  }
+                }
+                r.AppendLine();
+              }
+
+
+          }
+
+                r.AppendLine();
+          return r.ToString();
+           */
+
+        }
+
+        public BIOSInformation BIOS {
       get { return biosInformation; }
     }
 

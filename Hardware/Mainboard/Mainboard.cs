@@ -94,7 +94,7 @@ namespace OpenHardwareMonitor.Hardware.Mainboard {
     public string GetReport() {
       StringBuilder r = new StringBuilder(); 
 
-      r.AppendLine("Mainboard");
+      r.AppendLine("Mainboard XD");
       r.AppendLine();           
       r.Append(smbios.GetReport());
 
