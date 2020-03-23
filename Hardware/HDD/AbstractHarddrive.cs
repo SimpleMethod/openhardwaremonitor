@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using OpenHardwareMonitor.Collections;
 
 namespace OpenHardwareMonitor.Hardware.HDD
@@ -322,96 +323,23 @@ namespace OpenHardwareMonitor.Hardware.HDD
 
         public override string GetReport()
         {
-            StringBuilder r = new StringBuilder();
-
-            r.AppendLine(this.GetType().Name);
-            r.AppendLine();
-            r.AppendLine("Drive name: " + name);
-            r.AppendLine("Firmware version: " + firmwareRevision);
-            r.AppendLine();
-
-            if (handle != smart.InvalidHandle)
-            {
-                DriveAttributeValue[] values = smart.ReadSmartData(handle, index);
-                DriveThresholdValue[] thresholds =
-                  smart.ReadSmartThresholds(handle, index);
-
-                if (values.Length > 0)
-                {
-                    r.AppendFormat(CultureInfo.InvariantCulture,
-                      " {0}{1}{2}{3}{4}{5}{6}{7}",
-                      ("ID").PadRight(3),
-                      ("Description").PadRight(35),
-                      ("Raw Value").PadRight(13),
-                      ("Worst").PadRight(6),
-                      ("Value").PadRight(6),
-                      ("Thres").PadRight(6),
-                      ("Physical").PadRight(8),
-                      Environment.NewLine);
-
-                    foreach (DriveAttributeValue value in values)
-                    {
-                        if (value.Identifier == 0x00)
-                            break;
-
-                        byte? threshold = null;
-                        foreach (DriveThresholdValue t in thresholds)
-                        {
-                            if (t.Identifier == value.Identifier)
-                            {
-                                threshold = t.Threshold;
-                            }
-                        }
-
-                        string description = "Unknown";
-                        float? physical = null;
-                        foreach (SmartAttribute a in smartAttributes)
-                        {
-                            if (a.Identifier == value.Identifier)
-                            {
-                                description = a.Name;
-                                if (a.HasRawValueConversion | a.SensorType.HasValue)
-                                    physical = a.ConvertValue(value, null);
-                                else
-                                    physical = null;
-                            }
-                        }
-
-                        string raw = BitConverter.ToString(value.RawValue);
-                        r.AppendFormat(CultureInfo.InvariantCulture,
-                          " {0}{1}{2}{3}{4}{5}{6}{7}",
-                          value.Identifier.ToString("X2").PadRight(3),
-                          description.PadRight(35),
-                          raw.Replace("-", "").PadRight(13),
-                          value.WorstValue.ToString(CultureInfo.InvariantCulture).PadRight(6),
-                          value.AttrValue.ToString(CultureInfo.InvariantCulture).PadRight(6),
-                          (threshold.HasValue ? threshold.Value.ToString(
-                            CultureInfo.InvariantCulture) : "-").PadRight(6),
-                          (physical.HasValue ? physical.Value.ToString(
-                            CultureInfo.InvariantCulture) : "-").PadRight(8),
-                          Environment.NewLine);
-                    }
-                    r.AppendLine();
-                }
-            }
-
+            Drive_Model driveModel = new Drive_Model();
+            Queue<Drive> drives = new Queue<Drive>();
+            
             foreach (DriveInfo di in driveInfos)
             {
                 if (!di.IsReady)
                     continue;
                 try
                 {
-                    r.AppendLine("Logical drive name: " + di.Name);
-                    r.AppendLine("Format: " + di.DriveFormat);
-                    r.AppendLine("Total size: " + di.TotalSize);
-                    r.AppendLine("Total free space: " + di.TotalFreeSpace);
-                    r.AppendLine();
+                    drives.Enqueue(new Drive(di.TotalFreeSpace, di.TotalSize, di.DriveFormat, di.Name, firmwareRevision, name));
                 }
                 catch (IOException) { }
                 catch (UnauthorizedAccessException) { }
             }
 
-            return r.ToString();
+            driveModel.Drive = drives;
+            return JsonSerializer.Serialize(driveModel);
         }
 
         protected static float RawToInt(byte[] raw, byte value,

@@ -91,24 +91,9 @@ namespace OpenHardwareMonitor.Hardware.Mainboard {
       get { return null; }
     }
 
-    public string GetReport() {
-      StringBuilder r = new StringBuilder(); 
-
-      r.AppendLine("Mainboard XD");
-      r.AppendLine();           
-      r.Append(smbios.GetReport());
-
-      if (lpcio != null)
-        r.Append(lpcio.GetReport());
-
-      byte[] table = 
-        FirmwareTable.GetTable(FirmwareTable.Provider.ACPI, "TAMG");
-      if (table != null) {
-        GigabyteTAMG tamg = new GigabyteTAMG(table);
-        r.Append(tamg.GetReport());
-      }
-
-      return r.ToString();
+    public string GetReport()
+    {
+        return smbios.GetReport();
     }
 
     public void Update() { }

@@ -6,7 +6,6 @@
  
   Copyright (C) 2011 Michael Möller <mmoeller@openhardwaremonitor.org> 
   Modified by Michał Młodawski Simplemethod.io https://github.com/SimpleMethod 2020
-	
 */
 
 using System;

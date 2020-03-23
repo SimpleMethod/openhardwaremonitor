@@ -16,6 +16,31 @@ using System.Threading.Tasks;
 
 namespace OpenHardwareMonitor.Collections
 {
+    public class Drive_Model
+    {
+        public Queue<Drive> Drive { get; set; }
+    }
+
+    public class Drive
+    {
+        public Drive(long totalFreeSpace, long totalSize, string format, string logicalDriveName, string firmwareVersion, string driveName)
+        {
+            TotalFreeSpace = totalFreeSpace;
+            TotalSize = totalSize;
+            Format = format;
+            LogicalDriveName = logicalDriveName;
+            FirmwareVersion = firmwareVersion;
+            DriveName = driveName;
+        }
+
+        public string DriveName { get; set; }
+        public string FirmwareVersion { get; set; }
+        public string LogicalDriveName { get; set; }
+        public string Format { get; set; }
+        public long TotalSize { get; set; }
+        public long TotalFreeSpace { get; set; }
+    }
+
     public class SMBIOS_Model
     {
         [Obsolete]
