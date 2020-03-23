@@ -323,24 +323,28 @@ namespace OpenHardwareMonitor.Hardware.HDD
 
         public override string GetReport()
         {
-            Drive_Model driveModel = new Drive_Model();
-            Queue<Drive> drives = new Queue<Drive>();
-            
+            Drive drives = new Drive();
+
             foreach (DriveInfo di in driveInfos)
             {
                 if (!di.IsReady)
                     continue;
                 try
                 {
-                    drives.Enqueue(new Drive(di.TotalFreeSpace, di.TotalSize, di.DriveFormat, di.Name, firmwareRevision, name));
+                    drives.TotalFreeSpace = di.TotalFreeSpace;
+                    drives.TotalSize = di.TotalSize;
+                    drives.Format = di.DriveFormat;
+                    drives.LogicalDriveName = di.Name;
+                    drives.FirmwareVersion = firmwareRevision;
+                    drives.DriveName = name;
                 }
                 catch (IOException) { }
                 catch (UnauthorizedAccessException) { }
             }
-
-            driveModel.Drive = drives;
-            return JsonSerializer.Serialize(driveModel);
+            return JsonSerializer.Serialize(drives);
         }
+
+
 
         protected static float RawToInt(byte[] raw, byte value,
           IReadOnlyArray<IParameter> parameters)

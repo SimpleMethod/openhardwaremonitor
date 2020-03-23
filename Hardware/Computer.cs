@@ -322,14 +322,14 @@ namespace OpenHardwareMonitor.Hardware {
         }
         w.WriteLine();
 
-        NewSection(w);
-        w.WriteLine("Parameters");
-        w.WriteLine();
-        foreach (IGroup group in groups) {
-          foreach (IHardware hardware in group.Hardware)
-            ReportHardwareParameterTree(hardware, w, "");
-        }
-        w.WriteLine();
+        //NewSection(w);
+        //w.WriteLine("Parameters");
+        //w.WriteLine();
+        //foreach (IGroup group in groups) {
+       //   foreach (IHardware hardware in group.Hardware)
+      //      ReportHardwareParameterTree(hardware, w, "");
+     //   }
+     //   w.WriteLine();
 
         foreach (IGroup group in groups) {
           string report = group.GetReport();

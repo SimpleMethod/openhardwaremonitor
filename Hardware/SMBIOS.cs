@@ -153,7 +153,7 @@ namespace OpenHardwareMonitor.Hardware {
 
     public string GetReport() {
         Queue<RamMemory> ramMemories= new Queue<RamMemory>();
-        SMBIOS_Model smbiosModel = new SMBIOS_Model();
+        Smbios smbiosModel = new Smbios();
 
             if (BIOS != null)
             {

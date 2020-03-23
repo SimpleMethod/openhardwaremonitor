@@ -16,23 +16,22 @@ using System.Threading.Tasks;
 
 namespace OpenHardwareMonitor.Collections
 {
-    public class Drive_Model
+
+    public class NVidiaGpu
     {
-        public Queue<Drive> Drive { get; set; }
+        public string Name { get; set; }
+        public string DriverVersion { get; set; }
+        public string DriverBranch { get; set; }
+        public string DeviceID { get; set; }
+        public string RevisionID { get; set; }
+        public long CurrentTemp { get; set; }
+        public long TotalMemory { get; set; }
+        public long AvailableMemory {get; set; }
     }
 
     public class Drive
     {
-        public Drive(long totalFreeSpace, long totalSize, string format, string logicalDriveName, string firmwareVersion, string driveName)
-        {
-            TotalFreeSpace = totalFreeSpace;
-            TotalSize = totalSize;
-            Format = format;
-            LogicalDriveName = logicalDriveName;
-            FirmwareVersion = firmwareVersion;
-            DriveName = driveName;
-        }
-
+   
         public string DriveName { get; set; }
         public string FirmwareVersion { get; set; }
         public string LogicalDriveName { get; set; }
@@ -41,22 +40,9 @@ namespace OpenHardwareMonitor.Collections
         public long TotalFreeSpace { get; set; }
     }
 
-    public class SMBIOS_Model
+    public class Smbios
     {
-        [Obsolete]
-        //public SMBIOS_Model(string mainboardManufacturer, string biosVendor, string biosVersion, string mainboardName, string processorManufacturer, string processorVersion, string processorCoreCount, string processorThreadCount, Queue<RamMemory> ramMemory)
-        //{
-        //    MainboardManufacturer = mainboardManufacturer;
-        //    BiosVendor = biosVendor;
-        //   BiosVersion = biosVersion;
-        //    MainboardName = mainboardName;
-        //    ProcessorManufacturer = processorManufacturer;
-        //    ProcessorVersion = processorVersion;
-        //    ProcessorCoreCount = processorCoreCount;
-        //    ProcessorThreadCount = processorThreadCount;
-        //    RamMemory = ramMemory;
-        //}
-
+        
         public string BiosVendor { get; set; }
         public string BiosVersion { get; set; }
         public string MainboardManufacturer { get; set; }

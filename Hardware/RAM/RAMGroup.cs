@@ -9,9 +9,17 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace OpenHardwareMonitor.Hardware.RAM {
-  internal class RAMGroup : IGroup {
+    public class MemoryRam
+    {
+        public double TotalPhysicalMemory { get; set; }
+        public double TotalAvailableMemory { get; set; }
+
+    }
+    internal class RAMGroup : IGroup {
 
     private Hardware[] hardware;
 
@@ -26,10 +34,17 @@ namespace OpenHardwareMonitor.Hardware.RAM {
 
       hardware = new Hardware[] { new GenericRAM("Generic Memory", settings) };
     }
-
-    public string GetReport() {
-      return null;
-    }
+    [DllImport("kernel32.dll")]
+    static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
+        public string GetReport() {
+        MemoryRam memoryRam = new MemoryRam();
+        long phymemory;
+        GetPhysicallyInstalledSystemMemory(out phymemory);
+        var performance = new System.Diagnostics.PerformanceCounter("Memory", "Available KBytes");
+        memoryRam.TotalPhysicalMemory = phymemory / 1024.00 / 1024.00;
+        memoryRam.TotalAvailableMemory = performance.RawValue / 1024.00;
+        return JsonSerializer.Serialize(memoryRam);
+        }
 
     public IHardware[] Hardware {
       get {
